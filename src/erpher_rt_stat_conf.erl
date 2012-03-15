@@ -79,8 +79,7 @@ get_config_list() ->
 %%
 -spec fill_config_stat(list()) -> #est{}.
 
-fill_config_stat(All_list) ->
-    List = proplists:get_value(estat, All_list, []),
+fill_config_stat(List) ->
     #est{
         % amount and time for last jobs
         stat_limit_n = proplists:get_value(stat_limit_n, List, ?STAT_LIMIT_N),
