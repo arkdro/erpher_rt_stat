@@ -1,0 +1,18 @@
+{application, erpher_rt_stat, [
+    {description, "erpher runtime statistic"},
+    {id, "erpher_rt_stat"},
+    {vsn, "0.0.1"},
+    {modules, [
+        erpher_rt_stat_app,
+        erpher_rt_stat,
+        erpher_rt_stat_info,
+        erpher_rt_stat_sup
+    ]},
+    {registered, [
+        erpher_rt_stat,
+        erpher_rt_stat_supervisor
+    ]},
+    {mod, {erpher_rt_stat_app,[]}},
+    {applications, [kernel, stdlib]}
+]}.
+
