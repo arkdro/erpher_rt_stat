@@ -287,10 +287,10 @@ reload_config_signal() ->
 -spec prepare_all(#est{}) -> #est{}.
 
 prepare_all(#est{log_procs_interval=T} = C) ->
-    Stp = prepare_stat(C#est{start=now(), pid=self()}),
+    %Stp = prepare_stat(C#est{start=now(), pid=self()}),
     erlang:send_after(T, self(), log_procs),
     erlang:send_after(?STAT_T, self(), periodic_check), % for redundancy
-    prepare_storage(Stp).
+    prepare_storage(C).
     
 %%-----------------------------------------------------------------------------
 %%
@@ -478,9 +478,7 @@ add_hourly_job_stat(Time, Tag) ->
 -spec clean_old(#est{}) -> #est{}.
 
 clean_old(St) ->
-    Stc = clean_old_estat_files(St),
-    clean_old_statistic(Stc),
-    Stc.
+    clean_old_estat_files(St).
 
 clean_old_statistic(#est{stat_limit_cnt_h=Hlimit, stat_limit_cnt_m=Mlimit}) ->
     estat_misc:clean_timed_stat(?STAT_TAB_H, Hlimit),
