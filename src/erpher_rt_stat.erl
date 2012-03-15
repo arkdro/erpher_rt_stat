@@ -40,7 +40,7 @@
 -export([terminate/2, code_change/3]).
 -export([add/2, add/3, add/5]).
 -export([get/2]).
--export([stat_t/0, stat_t/1, add_stat_t/2, upd_stat_t/3, upd_stat_t/4]).
+-export([add_stat_t/2, upd_stat_t/3, upd_stat_t/4]).
 -export([
          reload_config_signal/0
         ]).
@@ -61,7 +61,7 @@
 %%% gen_server callbacks
 %%%----------------------------------------------------------------------------
 init(_) ->
-    C = ejobman_conf:get_config_stat(),
+    C = erpher_rt_stat_conf:get_config_stat(),
     New = prepare_all(C),
     process_flag(trap_exit, true), % to save storage
     erlang:send_after(?STAT_T, self(), periodic_check), % for redundancy
@@ -81,11 +81,6 @@ handle_call(stop, _From, St) ->
 
 handle_call(status, _From, St) ->
     {reply, St, St};
-
-%% @doc returns time statistic
-handle_call({stat_t, Type}, _From, St) ->
-    Res = ejobman_print_stat:make_stat_t_info(St, Type),
-    {reply, Res, St};
 
 handle_call({get, Start, Stop}, _From, St) ->
     mpln_p_debug:pr({?MODULE, get1, ?LINE, Start, Stop}, St#est.debug, run, 2),
@@ -251,19 +246,6 @@ get(Start, Stop) ->
 
 %%-----------------------------------------------------------------------------
 %%
-%% @doc asks ejobman_stat for time statistic
-%% @since 2012-02-02 14:09
-%%
--spec stat_t() -> string().
-
-stat_t() ->
-    stat_t(raw).
-
-stat_t(Type) ->
-    gen_server:call(?MODULE, {stat_t, Type}).
-
-%%-----------------------------------------------------------------------------
-%%
 %% @doc api call to add time statistic
 %% @since 2012-02-02 14:09
 %%
@@ -417,7 +399,7 @@ one_proc_info(Pid) ->
 %%
 real_log_procs(St) ->
     {Sum, Nproc} = Res = estat_misc:get_procs_info(),
-    ejobman_stat_rt_info:write_rt_info(St, Res),
+    erpher_rt_stat_info:write_rt_info(St, Res),
     mpln_p_debug:pr({?MODULE, 'real_log_procs', ?LINE, Nproc, Sum},
                     St#est.debug, stat, 4),
     add('memory', 'num_proc', Nproc),
@@ -778,7 +760,7 @@ process_reload_config(St) ->
     Stf = do_flush(St),
     stop_storage(Stf),
 
-    C = ejobman_conf:get_config_stat(),
+    C = erpher_rt_stat_conf:get_config_stat(),
     prepare_storage(C).
 
 %%%----------------------------------------------------------------------------
