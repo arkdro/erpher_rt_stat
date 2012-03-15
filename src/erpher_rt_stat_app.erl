@@ -41,7 +41,7 @@
 %%%----------------------------------------------------------------------------
 
 start() ->
-    ejobman_sup:start_link().
+    erpher_rt_stat_sup:start_link().
 
 start(_Type, _Args) ->
     start().
